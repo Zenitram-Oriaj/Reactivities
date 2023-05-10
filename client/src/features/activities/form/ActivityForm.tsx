@@ -6,9 +6,10 @@ interface IActivityFormProps {
   activity?: IActivity;
   onFormClose: () => void;
   onCreateOrEdit: (item: IActivity) => void;
+  submitting: boolean;
 }
 
-export default function ActivityForm({ activity, onFormClose, onCreateOrEdit }: IActivityFormProps): JSX.Element {
+export default function ActivityForm({ activity, onFormClose, onCreateOrEdit, submitting }: IActivityFormProps): JSX.Element {
   const initState: IActivity = activity ?? {
     id: '',
     title: '',
@@ -37,10 +38,10 @@ export default function ActivityForm({ activity, onFormClose, onCreateOrEdit }: 
         <Form.Input placeholder='Title' value={form.title} name='title' onChange={onInputChange} />
         <Form.TextArea placeholder='Description' value={form.description} name='description' onChange={onInputChange} />
         <Form.Input placeholder='Category' value={form.category} name='category' onChange={onInputChange} />
-        <Form.Input placeholder='Date' value={form.date} name='date' onChange={onInputChange} />
+        <Form.Input type='date' placeholder='Date' value={form.date} name='date' onChange={onInputChange} />
         <Form.Input placeholder='City' value={form.city} name='city' onChange={onInputChange} />
         <Form.Input placeholder='Venue' value={form.venue} name='venue' onChange={onInputChange} />
-        <Button floated='right' positive type='submit' content='Submit' />
+        <Button loading={submitting} floated='right' positive type='submit' content='Submit' />
         <Button floated='right' type='button' content='Cancel' onClick={onFormClose} />
       </Form>
     </Segment>

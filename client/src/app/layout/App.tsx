@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import axios, { AxiosResponse } from 'axios';
 import { v4 as uuid } from 'uuid';
 import { IActivity } from '../../interfaces/activity';
 import { Container } from 'semantic-ui-react';
 import NavBar from './navbar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard.tsx';
+import agent from '../../api/agent';
+import ContentLoader from './loader';
 
 function App(): JSX.Element {
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [activity, setActivity] = useState<IActivity | undefined>();
   const [editMode, setEditMode] = useState<boolean>(false);
+  const [loading, setloading] = useState<boolean>(true);
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   function onSelectActivity(id: string): void {
     setActivity(activities.find((act: IActivity) => act.id === id));
@@ -27,22 +30,43 @@ function App(): JSX.Element {
     setEditMode(false);
   }
 
-  function onCreateOrEdit(item: IActivity): void {
-    item.id ? setActivities([...activities.filter((act: IActivity) => act.id !== item.id), item]) : setActivities([...activities, { ...item, id: uuid() }]);
+  async function onCreateOrEdit(item: IActivity): Promise<void> {
+    setSubmitting(true);
+    try {
+      if (item.id) {
+        await agent.Activities.update(item);
+        setActivities([...activities.filter((act: IActivity) => act.id !== item.id), item]);
+      } else {
+        item.id = uuid();
+        await agent.Activities.create(item);
+        setActivities([...activities, item]);
+      }
+      setActivity(item);
+    } catch (err: unknown) {
+      console.error(err);
+    }
+   
     setEditMode(false);
-    setActivity(item);
+    setSubmitting(false);
   }
 
-  function onDelete(id: string): void {
-    setActivities([...activities.filter((act: IActivity) => act.id !== id)]);
-    setEditMode(false);
+  async function onDelete(id: string): Promise<void> {
+    setSubmitting(true);
+    try {
+      await agent.Activities.delete(id);
+      setActivities([...activities.filter((act: IActivity) => act.id !== id)]);
+    } catch (err: unknown) {
+      console.error(err);
+    }
+    setSubmitting(false);
   }
 
   useEffect(() => {
-    axios
-      .get<IActivity[]>('http://localhost:5000/api/activities')
-      .then((res: AxiosResponse) => {
-        setActivities(res.data);
+    agent.Activities.list()
+      .then((data: IActivity[]) => {
+        data.forEach((act: IActivity) => act.date = act.date.split('T')[0]);
+        setActivities(data);
+        setloading(false);
       })
       .catch((reason: unknown) => { console.error(reason) });
   }, []);
@@ -56,8 +80,11 @@ function App(): JSX.Element {
     onFormClose,
     editMode,
     onCreateOrEdit,
-    onDelete
+    onDelete,
+    submitting
   }
+
+  if (loading) return (<ContentLoader />)
   return (
     <>
       <NavBar onFormOpen={onFormOpen} />
