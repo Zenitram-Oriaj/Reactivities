@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <CSharpToTypeScriptOutputFolder>C:\Users\NC514NY\projects\Reactivities\client-app\src</CSharpToTypeScriptOutputFolder>
+  </PropertyGroup>
+</Project>
