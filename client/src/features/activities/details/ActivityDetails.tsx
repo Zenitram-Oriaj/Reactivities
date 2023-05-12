@@ -1,14 +1,12 @@
 import React from 'react';
 import { Card, Image, Button, ButtonGroup } from 'semantic-ui-react';
-import { IActivity } from '../../../interfaces/activity';
+import { useStore } from '../../../stores/store';
 
-interface IActivityDetailsProps {
-  activity?: IActivity;
-  onCancelSelect: () => void;
-  onFormOpen: (id: string) => void;
-}
 
-export default function ActivityDetails({ activity, onCancelSelect, onFormOpen }: IActivityDetailsProps): JSX.Element {
+export default function ActivityDetails(): JSX.Element {
+  const { activityStore } = useStore();
+  const { activity, openForm, cancelSelectedActivity } = activityStore;
+
   if (!activity) return (<></>);
   return (
     <Card>
@@ -24,10 +22,9 @@ export default function ActivityDetails({ activity, onCancelSelect, onFormOpen }
       </Card.Content>
       <Card.Content extra>
         <ButtonGroup widths='2'>
-          <Button basic color='blue' content='Edit' onClick={() => onFormOpen(activity.id)} />
-          <Button basic color='grey' content='Cancel' onClick={() => onCancelSelect()} />
+          <Button basic color='blue' content='Edit' onClick={() => openForm(activity.id)} />
+          <Button basic color='grey' content='Cancel' onClick={() => cancelSelectedActivity()} />
         </ButtonGroup>
-
       </Card.Content>
     </Card>
   );

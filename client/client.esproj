@@ -14,5 +14,6 @@
   <ItemGroup>
     <Folder Include="public\assets\" />
     <Folder Include="src\api\" />
+    <Folder Include="src\stores\" />
   </ItemGroup>
 </Project>
