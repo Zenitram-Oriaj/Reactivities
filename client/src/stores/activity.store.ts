@@ -32,7 +32,15 @@ export default class ActivityStore {
   }
 
   public get activitiesByDate(): IActivity[] {
-    return [...this.activityRegistry.values()].sort((a:IActivity, b:IActivity) => Date.parse(a.date) - Date.parse(b.date));
+    return Array.from(this.activityRegistry.values()).sort((a:IActivity, b:IActivity) => Date.parse(a.date) - Date.parse(b.date));
+  }
+
+  public get groupedActivities() {
+    return Object.entries(this.activitiesByDate.reduce((activities, activity: IActivity) => {
+      const date = activity.date;
+      activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+      return activities;
+    }, {} as {[key: string]: Activity[]}));
   }
 
   public loadActivities = async(): Promise<void> => {
