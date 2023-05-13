@@ -1,6 +1,5 @@
 import { IActivity } from './../interfaces/activity';
 import { makeAutoObservable, runInAction } from "mobx";
-import { v4 as uuid } from 'uuid';
 import agent from "../api/agent";
 
 
@@ -21,7 +20,7 @@ export default class ActivityStore {
   public activityRegistry = new Map<string, IActivity>();
   public activity?: IActivity;
   public editMode: boolean = false;
-  public loadingInitial: boolean = true;
+  public loadingInitial: boolean = false;
   public loading: boolean = false;
 
   constructor() {
@@ -37,6 +36,7 @@ export default class ActivityStore {
   }
 
   public loadActivities = async(): Promise<void> => {
+    this.setLoadingInitial(true);
     try {
       const activities = await agent.Activities.list();
       if (!activities.length) {
@@ -45,8 +45,7 @@ export default class ActivityStore {
       }
 
       activities.forEach((act: IActivity) => {
-        act.date = act.date.split('T')[0];
-        this.activityRegistry.set(act.id, act);
+        this.setActivity(act);
       });
     } catch (e: unknown) {
       console.error(e);
@@ -54,29 +53,41 @@ export default class ActivityStore {
     this.setLoadingInitial(false);
   }
 
+  public loadActivity = async(id: string): Promise<IActivity> => {
+    try {
+      let activity = this.getActivity(id);
+      if(activity) {
+        this.activity = {...activity};
+        return activity;
+      }
+      this.setLoadingInitial(true);
+      activity = await agent.Activities.details(id);
+      if(activity) {
+        this.setActivity(activity);
+        this.activity = {...activity};
+        this.setLoadingInitial(false);
+        return activity;
+      }
+    } catch (e: unknown) {
+      console.error(e);
+    }
+    this.setLoadingInitial(false);
+    return new Activity();
+  }
+
+  public clearActivity = (): void => {
+    this.activity = new Activity();
+  }
+
+  private getActivity = (id: string): IActivity | undefined => this.activityRegistry.get(id);
+  
+  private setActivity = (activity: IActivity): void => {
+    activity.date = activity.date.split('T')[0];
+    this.activityRegistry.set(activity.id, activity);
+  }
+
   public setLoadingInitial = (state: boolean): void => {
     this.loadingInitial = state;
-  }
-
-  public selectActivity = (id: string): void => {
-    this.activity = this.activityRegistry.get(id);
-  }
-
-  public cancelSelectedActivity = (): void => {
-    this.activity = undefined;
-  }
-
-  public openForm = (id?: string): void => {
-    id ? this.selectActivity(id) : this.cancelSelectedActivity();
-    this.setEditMode(true);
-  }
-
-  public closeForm = (): void => {
-    this.setEditMode(false);
-  }
-
-  public setActivity = (activity?: IActivity): void => {
-    this.activity = activity;
   }
 
   public setEditMode = (state: boolean): void => {
@@ -90,13 +101,12 @@ export default class ActivityStore {
   public createActivity = async (activity: IActivity): Promise<void> => {
     this.setLoading(true);
     try {
-      activity.id = uuid();
       await agent.Activities.create(activity);
       runInAction(() => {
         this.activityRegistry.set(activity.id, activity);
-        this.setActivity(activity);
+        this.activity = {...activity};
         this.setLoading(false);
-        this.closeForm();
+        this.setEditMode(false);
       })
     } catch (e: unknown) {
       console.error(e);
@@ -110,9 +120,9 @@ export default class ActivityStore {
       await agent.Activities.update(activity);
       runInAction(() => {
         this.activityRegistry.set(activity.id, activity);
-        this.setActivity(activity);
+        this.activity = {...activity};
         this.setLoading(false);
-        this.closeForm();
+        this.setEditMode(false);
       });
     } catch (e: unknown) {
       console.error(e);
@@ -126,7 +136,6 @@ export default class ActivityStore {
       await agent.Activities.delete(id);
       runInAction(() => {
         this.activityRegistry.delete(id);
-        if(this.activity?.id === id) this.cancelSelectedActivity();
         this.setLoading(false);
       })
     } catch (err: unknown) {

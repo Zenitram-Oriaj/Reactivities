@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, Image, Button, ButtonGroup } from 'semantic-ui-react';
 import { useStore } from '../../../stores/store';
+import { useParams } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import ContentLoader from '../../../app/layout/loader';
+import { Link } from 'react-router-dom';
 
 
-export default function ActivityDetails(): JSX.Element {
+export default observer(function ActivityDetails(): JSX.Element {
   const { activityStore } = useStore();
-  const { activity, openForm, cancelSelectedActivity } = activityStore;
+  const { id } = useParams();
+  const { activity, loadActivity, loadingInitial } = activityStore;
 
-  if (!activity) return (<></>);
+  useEffect(() => {
+    if (id) loadActivity(id);
+  }, [id, loadActivity]);
+
+  if (loadingInitial || !activity) return (<ContentLoader />);
   return (
     <Card>
       <Image src={`/assets/categoryImages/${activity.category}.jpg`} />
@@ -22,10 +31,10 @@ export default function ActivityDetails(): JSX.Element {
       </Card.Content>
       <Card.Content extra>
         <ButtonGroup widths='2'>
-          <Button basic color='blue' content='Edit' onClick={() => openForm(activity.id)} />
-          <Button basic color='grey' content='Cancel' onClick={() => cancelSelectedActivity()} />
+          <Button basic color='blue' content='Edit' as={Link} to={`/activities/manage/${activity.id}`} />
+          <Button basic color='grey' content='Cancel' as={Link} to='/activities' />
         </ButtonGroup>
       </Card.Content>
     </Card>
   );
-}
+});

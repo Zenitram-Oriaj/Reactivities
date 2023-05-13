@@ -1,25 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Container } from 'semantic-ui-react';
 import NavBar from './navbar';
-import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard.tsx';
-import ContentLoader from './loader';
-import { useStore } from '../../stores/store';
 import { observer } from 'mobx-react-lite';
+import { Outlet } from 'react-router-dom';
 
 function App(): JSX.Element {
-  const { activityStore } = useStore();
-
-  useEffect(() => {
-    activityStore.loadActivities();
-  }, [activityStore]);
-
-
-  if (activityStore.loadingInitial) return (<ContentLoader />)
   return (
     <>
       <NavBar />
       <Container style={{ marginTop: '7em' }}>
-        <ActivityDashboard />
+        <Outlet />
       </Container>
     </>
   );
