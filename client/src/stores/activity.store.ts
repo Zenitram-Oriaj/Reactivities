@@ -22,6 +22,7 @@ export default class ActivityStore {
   public editMode: boolean = false;
   public loadingInitial: boolean = false;
   public loading: boolean = false;
+  public predicate = new Map().set('all', true);
 
   constructor() {
     makeAutoObservable(this);
@@ -42,6 +43,32 @@ export default class ActivityStore {
       return activities;
     }, {} as {[key: string]: Activity[]}));
   }
+
+  public setPredicate = (predicate: string, value: string | Date) => {
+    const resetPredicate = () => {
+        this.predicate.forEach((value, key) => {
+            if (key !== 'startDate') this.predicate.delete(key);
+        })
+    }
+    switch (predicate) {
+        case 'all':
+            resetPredicate();
+            this.predicate.set('all', true);
+            break;
+        case 'isGoing':
+            resetPredicate();
+            this.predicate.set('isGoing', true);
+            break;
+        case 'isHost':
+            resetPredicate();
+            this.predicate.set('isHost', true);
+            break;
+        case 'startDate':
+            this.predicate.delete('startDate');
+            this.predicate.set('startDate', value);
+            break;
+    }
+}
 
   public loadActivities = async(): Promise<void> => {
     this.setLoadingInitial(true);
