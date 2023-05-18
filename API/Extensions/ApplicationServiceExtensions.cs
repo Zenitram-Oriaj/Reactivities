@@ -2,6 +2,8 @@
 using Persistence;
 using Application.Activities;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 namespace API.Extensions
 {
@@ -31,6 +33,9 @@ namespace API.Extensions
       {
         opt.RegisterServicesFromAssemblyContaining<List.Handler>();
       });
+
+      services.AddFluentValidationAutoValidation();
+      services.AddValidatorsFromAssemblyContaining<Create>();
 
       return services;
     }
