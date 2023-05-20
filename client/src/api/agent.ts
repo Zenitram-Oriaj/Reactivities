@@ -1,24 +1,81 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { IActivity } from '../interfaces/activity';
+import { toast } from 'react-toastify';
+import { router } from '../router/routes';
+import { store } from '../stores/store';
 
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
     setTimeout(resolve, delay);
-  })
+  });
 };
+
+// interface ValidationErrors {
+//   Category?: string[];
+//   City?: string[];
+//   Date?: string[];
+//   Description?: string[];
+//   Title?: string[];
+//   Venue?: string[];
+// }
+
+// interface DataError {
+//   [key: string]: string[];
+// }
+// interface DataErrorResponse {
+//   errors: DataError;
+// }
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
 axios.interceptors.response.use(async (res: AxiosResponse) => {
-  try {
-    await sleep(1000)
-    return res;
-  } catch (err: unknown) {
-    console.error(err);
-    return await Promise.reject(err);
+  await sleep(1000);
+  return res;
+}, (err: AxiosError) => {
+  const { status, data, config } = err.response as AxiosResponse
+  switch (status) {
+    case 400: {
+      if(config.method === 'get' && data.errors.hasOwnProperty('id')) {
+        router.navigate('/not-found');
+        return;
+      }
+      if (typeof data !== 'string' && data.errors) {
+        const modelStateErrors = [];
+        const {errors} = data;
+        for(const key in errors) {
+          console.log(key);
+          if(errors[key]) {
+            console.log(errors[key]);
+            modelStateErrors.push(errors[key])
+          }
+        }
+        throw modelStateErrors.flat();
+      }
+      else toast.error(data as string);
+      break;
+    }
+    case 401: {
+      toast.error('unauthorized');
+      break;
+    }
+    case 403: {
+      toast.error('forbidden');
+      break;
+    }
+    case 404: {
+      router.navigate('not-found');
+      break;
+    }
+    case 500: {
+      store.commonStore.setServerError(data);
+      router.navigate('/server-error');
+      break;
+    }
+    default: { break; }
   }
-})
+  return Promise.reject(err);
+});
 
 const resBody = <T>(res: AxiosResponse<T>) => res.data;
 
