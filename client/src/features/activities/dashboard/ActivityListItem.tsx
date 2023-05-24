@@ -35,7 +35,7 @@ export default observer(function ActivityListItem({
       </Segment>
       <Segment>
         <span>
-          <Icon name='clock' /> {format(new Date(activity.date), 'dd MMM yyyy h:mm aa')}
+          <Icon name='clock' /> {format(new Date(activity.date ?? ''), 'dd MMM yyyy h:mm aa')}
           <Icon name='marker' /> {activity.venue}
         </span>
       </Segment>

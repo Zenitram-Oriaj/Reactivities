@@ -1,12 +1,13 @@
 import { IActivity } from './../interfaces/activity';
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
+import { format } from 'date-fns';
 
 
 export class Activity implements IActivity {
   public id: string = '';
   public title: string = '';
-  public date: string = '';
+  public date: Date | null = null;
   public description: string = '';
   public category: string = '';
   public city: string = '';
@@ -33,13 +34,13 @@ export default class ActivityStore {
   }
 
   public get activitiesByDate(): IActivity[] {
-    return Array.from(this.activityRegistry.values()).sort((a:IActivity, b:IActivity) => Date.parse(a.date) - Date.parse(b.date));
+    return Array.from(this.activityRegistry.values()).sort((a:IActivity, b:IActivity) => a.date!.getTime() - b.date!.getTime());
   }
 
   public get groupedActivities() {
     return Object.entries(this.activitiesByDate.reduce((activities, activity: IActivity) => {
-      const date = activity.date;
-      activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+      const date = format(new Date(activity.date ?? ''), 'dd MMM yyyy')
+      if(date) activities[date] = activities[date] ? [...activities[date], activity] : [activity];
       return activities;
     }, {} as {[key: string]: Activity[]}));
   }
@@ -117,7 +118,7 @@ export default class ActivityStore {
   private getActivity = (id: string): IActivity | undefined => this.activityRegistry.get(id);
   
   private setActivity = (activity: IActivity): void => {
-    activity.date = activity.date.split('T')[0];
+    activity.date = activity.date ? new Date(activity.date) : null;
     this.activityRegistry.set(activity.id, activity);
   }
 

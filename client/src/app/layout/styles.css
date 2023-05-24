@@ -17,6 +17,10 @@ body {
   color: #009c95;
 }
 
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
 /*home page styles*/
 
 .masthead {
