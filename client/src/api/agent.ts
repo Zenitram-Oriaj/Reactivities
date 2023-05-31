@@ -3,6 +3,7 @@ import { IActivity } from '../interfaces/activity';
 import { toast } from 'react-toastify';
 import { router } from '../router/routes';
 import { store } from '../stores/store';
+import { IUser, IUserFormValues } from '../interfaces/user';
 
 
 const sleep = (delay: number) => {
@@ -94,8 +95,16 @@ const Activities = {
   delete: (id: string) => requests.delete<IActivity>(`/activities/${id}`)
 };
 
+const Account = {
+  current: () => requests.get<IUser>('/account'),
+  login: (user: IUserFormValues) => requests.post<IUser>('/account/login', user),
+  register: (user: IUserFormValues) => requests.post<IUser>('/account/register', user),
+  logout: () => requests.get('/account/logout')
+}
+
 const agent = {
-  Activities
+  Activities,
+  Account
 };
 
 export default agent;

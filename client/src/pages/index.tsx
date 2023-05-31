@@ -10,7 +10,9 @@ export default function HomePage(): JSX.Element {
           Reactivities
         </Header>
         <Header as="h2" inverted content="Welcome To Reactivities"/>
-        <Button as={Link} to="/activities" size="huge" inverted content="Take Me To Activities" />
+        <Button as={Link} to="/login" size="huge" inverted content="Login" />
+        <Button as={Link} to="/register" size="huge" inverted content="Register" />
+
       </Container>
     </Segment>
     

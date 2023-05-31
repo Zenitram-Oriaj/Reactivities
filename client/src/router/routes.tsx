@@ -9,6 +9,7 @@ import NotFound from "../features/errors/NotFound";
 import ServerError from "../features/errors/ServerError";
 import NotAuthorized from "../features/errors/NotAuthorized";
 import Forbidden from "../features/errors/Forbidden";
+import LoginForm from "../features/users/LoginForm";
 
 
 export const routes: RouteObject[] = [
@@ -24,6 +25,7 @@ export const routes: RouteObject[] = [
       { path: 'activities/:id', element: <ActivityDetails /> },
       { path: 'activities/create', element: <ActivityForm key='create'/> },
       { path: 'activities/manage/:id', element: <ActivityForm key='manage'/> },
+      { path: 'login', element: <LoginForm /> },
       { path: 'errors', element: <TestErrors/> },
       { path: 'server-error', element: <ServerError/> },
       { path: 'not-found', element: <NotFound/> },
