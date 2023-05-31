@@ -5,4 +5,7 @@
     <Nullable>disable</Nullable>
     <CSharpToTypeScriptOutputFolder>C:\Users\NC514NY\projects\Reactivities\client-app\src</CSharpToTypeScriptOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
+  </ItemGroup>
 </Project>
