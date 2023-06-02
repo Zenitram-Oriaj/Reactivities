@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { IActivity } from '../interfaces/activity';
 import { toast } from 'react-toastify';
 import { router } from '../router/routes';
@@ -29,6 +29,13 @@ const sleep = (delay: number) => {
 // }
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
+
+
+axios.interceptors.request.use((config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+  const token = store.commonStore.token;
+  if(token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 axios.interceptors.response.use(async (res: AxiosResponse) => {
   await sleep(1000);

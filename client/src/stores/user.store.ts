@@ -43,10 +43,20 @@ export default class UserStore {
     try {
       await agent.Account.logout();
       store.commonStore.setToken(null);
-      runInAction(() => this.user = null)
       router.navigate('/');
     } catch(ex: unknown) {
       throw ex;
+    }
+  }
+
+
+  public async getUser(): Promise<IUser | null> {
+    try {
+      const user = await agent.Account.current();
+      runInAction(() => this.user = {...user});
+      return user;
+    } catch (error: unknown) {
+      throw error;
     }
   }
 }

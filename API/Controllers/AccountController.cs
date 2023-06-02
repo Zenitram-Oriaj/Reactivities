@@ -62,12 +62,26 @@ namespace API.Controllers
       return BadRequest(result.Errors);
     }
 
+    [HttpGet("logout")]
+    public async Task<ActionResult<UserDto>> Logout()
+    {
+      var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+      return Ok(user);
+    }
+
     [HttpGet]
     public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
-      var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
-      if (user == null) return NotFound();
-      return Ok(CreateUserDto(user));
+      try
+      {
+        var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+        if (user == null) return NotFound();
+        return Ok(CreateUserDto(user));
+      }
+      catch (Exception ex)
+      {
+        return NotFound(ex);
+      }
     }
 
     private UserDto CreateUserDto(AppUser user)

@@ -1,18 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container } from 'semantic-ui-react';
 import NavBar from './navbar';
+import HomePage from "../../pages";
 import { observer } from 'mobx-react-lite';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { useStore } from '../../stores/store';
+import Loader from './loader';
 
 function App(): JSX.Element {
+  const location = useLocation();
+  const {commonStore, userStore} = useStore();
+
+  useEffect(() => {
+    if (commonStore.token) userStore.getUser().finally(() => commonStore.setAppLoader());
+    else commonStore.setAppLoader();
+    
+  }, [commonStore, userStore])
+
+  if(!commonStore.appLoader) return (<Loader content='Loading Application...'/>)
   return (
     <>
     <ToastContainer position='bottom-right' hideProgressBar theme='colored'/>
-      <NavBar />
-      <Container style={{ marginTop: '7em' }}>
-        <Outlet />
-      </Container>
+    { location.pathname === '/' ? <HomePage /> : (
+      <> 
+        <NavBar />
+        <Container style={{ marginTop: '7em' }}>
+          <Outlet />
+        </Container>
+      </>
+    )}
     </>
   );
 }

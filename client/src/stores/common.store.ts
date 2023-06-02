@@ -1,16 +1,23 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { IServerError } from "../interfaces/server.error";
 
 
-export type StorageOperation = 'add' | 'remove' | 'get';
+export type StorageOperation = 'set' | 'remove' | 'get';
 
 export default class CommonStore {
   public error: IServerError | null = null;
-  public token: string | null = null;
+  public token: string | null = localStorage.getItem('jwt');
   public appLoader: boolean = false;
 
   constructor() {
       makeAutoObservable(this);
+      reaction(
+        () => this.token,
+        token => {
+          if(token) localStorage.setItem('jwt', token);
+          else localStorage.removeItem('jwt');  
+        }
+        )
   }
 
   public setServerError(error: IServerError): void {
@@ -23,20 +30,21 @@ export default class CommonStore {
 
   public setAppLoader(): void {
     this.appLoader = true;
-    this.token = localStorage.getItem('jwt');
+    this.token = this.storage('get', 'jwt');
   }
 
-  public setLocalStorage(opt: StorageOperation, key: string, value?: any): string | boolean | null {
+  public storage(opt: StorageOperation, key: string, value?: any): string | null {
     switch(opt) {
-      case 'add': {
+      case 'set': {
         localStorage.setItem(key, value);
-        return true;
+        return value;
       }
       case 'get': {
-        return localStorage.getItem('jwt');
+        return localStorage.getItem(key);
       }
       default: {
-        return false;
+        localStorage.removeItem(key);
+        return '';
       }
     }
   }
