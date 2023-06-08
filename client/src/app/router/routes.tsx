@@ -1,15 +1,15 @@
 import { Navigate, RouteObject, createBrowserRouter } from "react-router-dom";
-import App from "../app/layout/App";
+import App from "../layout/App";
 import HomePage from "../pages";
-import ActivityDashboard from "../features/activities/dashboard/ActivityDashboard.tsx";
-import ActivityForm from "../features/activities/form/ActivityForm";
-import ActivityDetails from "../features/activities/details/ActivityDetails";
-import TestErrors from "../features/errors/TestError";
-import NotFound from "../features/errors/NotFound";
-import ServerError from "../features/errors/ServerError";
-import NotAuthorized from "../features/errors/NotAuthorized";
-import Forbidden from "../features/errors/Forbidden";
-import LoginForm from "../features/users/LoginForm";
+import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard.tsx";
+import ActivityForm from "../../features/activities/form/ActivityForm";
+import ActivityDetails from "../../features/activities/details/ActivityDetails";
+import TestErrors from "../../features/errors/TestError";
+import NotFound from "../../features/errors/NotFound";
+import ServerError from "../../features/errors/ServerError";
+import NotAuthorized from "../../features/errors/NotAuthorized";
+import Forbidden from "../../features/errors/Forbidden";
+import LoginForm from "../../features/users/LoginForm";
 
 
 export const routes: RouteObject[] = [

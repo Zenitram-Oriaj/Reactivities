@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Container, Dropdown, Image, Menu } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
-import { useStore } from '../../stores/store';
+import { useStore } from '../stores/store';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 

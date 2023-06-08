@@ -7,7 +7,7 @@ export type StorageOperation = 'set' | 'remove' | 'get';
 export default class CommonStore {
   public error: IServerError | null = null;
   public token: string | null = localStorage.getItem('jwt');
-  public appLoader: boolean = false;
+  public appLoaded: boolean = false;
 
   constructor() {
       makeAutoObservable(this);
@@ -29,7 +29,7 @@ export default class CommonStore {
   }
 
   public setAppLoader(): void {
-    this.appLoader = true;
+    this.appLoaded = true;
     this.token = this.storage('get', 'jwt');
   }
 

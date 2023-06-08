@@ -1,4 +1,4 @@
-import { IActivity } from './../interfaces/activity';
+import { IActivity } from '../interfaces/activity';
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { format } from 'date-fns';

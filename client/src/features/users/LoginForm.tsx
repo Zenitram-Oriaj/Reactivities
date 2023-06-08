@@ -1,7 +1,7 @@
 import { ErrorMessage, Form, Formik } from "formik";
 import FormTextInput from "../../app/common/form/form.text.input";
 import { Button, Label } from "semantic-ui-react";
-import { store } from "../../stores/store";
+import { store } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 
 export default observer(function LoginForm(): JSX.Element {
@@ -21,5 +21,5 @@ export default observer(function LoginForm(): JSX.Element {
           </Form>
         )}
       </Formik>
-  )
-})
+  );
+});

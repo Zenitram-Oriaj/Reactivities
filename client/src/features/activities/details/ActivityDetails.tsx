@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Grid } from 'semantic-ui-react';
-import { useStore } from '../../../stores/store';
+import { useStore } from '../../../app/stores/store';
 import { useParams } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import ContentLoader from '../../../app/layout/loader';

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Grid } from 'semantic-ui-react';
 import { observer } from 'mobx-react-lite';
-import { useStore } from '../../../stores/store';
+import { useStore } from '../../../app/stores/store';
 import ActivityList from './ActivityList';
 import ContentLoader from '../../../app/layout/loader';
 import ActivityFilters from './ActivityFilters';

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react'
 import {Segment, Grid, Icon} from 'semantic-ui-react'
-import { IActivity } from '../../../interfaces/activity';
+import { IActivity } from '../../../app/interfaces/activity';
 import { format } from 'date-fns';
 
 interface Props {
